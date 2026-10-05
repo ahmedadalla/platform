@@ -53,7 +53,7 @@ router.put('/categories/:id', async (req: Request, res: Response) => {
     const { name, sortOrder } = req.body;
 
     const updated = await prisma.menuCategory.updateMany({
-      where: { id, companyId },
+      where: { id: id as string, companyId },
       data: {
         name: name !== undefined ? name : undefined,
         sortOrder: sortOrder !== undefined ? sortOrder : undefined,
