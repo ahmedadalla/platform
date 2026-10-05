@@ -29,5 +29,5 @@ RUN mkdir -p uploads data/sessions
 
 EXPOSE 5000
 
-# Run migrations then start
-CMD ["sh", "-c", "npx prisma migrate deploy && node dist/index.js"]
+# Push schema to database if tables do not exist, then start
+CMD ["sh", "-c", "npx prisma db push --skip-generate && node dist/index.js"]
