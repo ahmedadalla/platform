@@ -51,7 +51,7 @@ router.patch('/:id/status', async (req: Request, res: Response) => {
     }
 
     const order = await prisma.order.findFirst({
-      where: { id, companyId },
+      where: { id: id as string, companyId },
       include: { items: true },
     });
 
@@ -60,7 +60,7 @@ router.patch('/:id/status', async (req: Request, res: Response) => {
     }
 
     const updated = await prisma.order.update({
-      where: { id },
+      where: { id: id as string },
       data: { status },
       include: { items: true },
     });
@@ -115,13 +115,15 @@ router.post('/simulate', async (req: Request, res: Response) => {
     });
     const nextOrderNum = (lastOrder?.orderNumber || 1000) + 1;
 
-    const sampleItems = company.items.length > 0 ? company.items : [
-      { name: 'Special Burger Combo', price: 14.50 },
-      { name: 'Iced Lemon Tea', price: 3.50 },
-    ];
+    const sampleItems: Array<{ name: string; price: number }> = company.items.length > 0
+      ? company.items.map(it => ({ name: it.name, price: it.price }))
+      : [
+          { name: 'Special Burger Combo', price: 14.50 },
+          { name: 'Iced Lemon Tea', price: 3.50 },
+        ];
 
-    const subtotal = sampleItems.reduce((acc, it) => acc + it.price, 0);
-    const total = subtotal + company.deliveryFee;
+    const subtotal: number = sampleItems.reduce((acc: number, it: { name: string; price: number }) => acc + it.price, 0);
+    const total: number = subtotal + company.deliveryFee;
 
     const created = await prisma.order.create({
       data: {

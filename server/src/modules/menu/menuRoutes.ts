@@ -73,7 +73,7 @@ router.delete('/categories/:id', async (req: Request, res: Response) => {
     const { id } = req.params;
 
     await prisma.menuCategory.deleteMany({
-      where: { id, companyId },
+      where: { id: id as string, companyId },
     });
 
     return res.json({ message: 'Category deleted' });
@@ -124,7 +124,7 @@ router.put('/items/:id', async (req: Request, res: Response) => {
     const { categoryId, name, description, price, imageUrl, isAvailable } = req.body;
 
     const updated = await prisma.menuItem.updateMany({
-      where: { id, companyId },
+      where: { id: id as string, companyId },
       data: {
         categoryId: categoryId || undefined,
         name: name || undefined,
@@ -148,12 +148,12 @@ router.patch('/items/:id/toggle', async (req: Request, res: Response) => {
     const { id } = req.params;
 
     const item = await prisma.menuItem.findFirst({
-      where: { id, companyId },
+      where: { id: id as string, companyId },
     });
     if (!item) return res.status(404).json({ error: 'Item not found' });
 
     const updated = await prisma.menuItem.update({
-      where: { id },
+      where: { id: id as string },
       data: { isAvailable: !item.isAvailable },
     });
 
@@ -170,7 +170,7 @@ router.delete('/items/:id', async (req: Request, res: Response) => {
     const { id } = req.params;
 
     await prisma.menuItem.deleteMany({
-      where: { id, companyId },
+      where: { id: id as string, companyId },
     });
 
     return res.json({ message: 'Item deleted' });

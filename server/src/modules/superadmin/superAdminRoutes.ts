@@ -127,7 +127,7 @@ router.patch('/companies/:id/status', async (req: Request, res: Response) => {
     }
 
     const updated = await prisma.company.update({
-      where: { id },
+      where: { id: id as string },
       data: { isActive },
     });
 
@@ -152,7 +152,7 @@ router.patch('/companies/:id/ai', async (req: Request, res: Response) => {
     if (aiSystemPrompt !== undefined) data.aiSystemPrompt = aiSystemPrompt;
 
     const updated = await prisma.company.update({
-      where: { id },
+      where: { id: id as string },
       data,
     });
 

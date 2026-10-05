@@ -143,7 +143,7 @@ router.delete('/:id', async (req: Request, res: Response) => {
     const { id } = req.params;
 
     const doc = await prisma.knowledgeDoc.findFirst({
-      where: { id, companyId },
+      where: { id: id as string, companyId },
     });
 
     if (!doc) {
@@ -160,7 +160,7 @@ router.delete('/:id', async (req: Request, res: Response) => {
     }
 
     await prisma.knowledgeDoc.delete({
-      where: { id },
+      where: { id: id as string },
     });
 
     return res.json({ message: 'Document removed from Knowledge Base' });
