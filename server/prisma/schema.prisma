@@ -1,0 +1,122 @@
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id           String    @id @default(uuid())
+  email        String    @unique
+  passwordHash String
+  name         String
+  role         String    @default("COMPANY_ADMIN") // SUPER_ADMIN | COMPANY_ADMIN | STAFF
+  companyId    String?
+  company      Company?  @relation(fields: [companyId], references: [id], onDelete: SetNull)
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+}
+
+model Company {
+  id              String          @id @default(uuid())
+  name            String
+  slug            String          @unique
+  phone           String?
+  isActive        Boolean         @default(true)
+  deliveryFee     Float           @default(3.0)
+  minOrderAmount  Float           @default(10.0)
+  currency        String          @default("USD")
+  
+  // AI Configuration per Company
+  aiProvider      String          @default("gemini") // gemini | openai | openrouter
+  aiApiKey        String?
+  aiModel         String          @default("gemini-1.5-flash")
+  aiCustomBaseUrl String?
+  aiSystemPrompt  String?
+
+  users           User[]
+  categories      MenuCategory[]
+  items           MenuItem[]
+  orders          Order[]
+  documents       KnowledgeDoc[]
+  conversations   Conversation[]
+  
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+}
+
+model MenuCategory {
+  id          String     @id @default(uuid())
+  companyId   String
+  company     Company    @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  name        String
+  sortOrder   Int        @default(0)
+  items       MenuItem[]
+}
+
+model MenuItem {
+  id          String        @id @default(uuid())
+  companyId   String
+  company     Company       @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  categoryId  String
+  category    MenuCategory  @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  name        String
+  description String?
+  price       Float
+  imageUrl    String?
+  isAvailable Boolean       @default(true)
+  orderItems  OrderItem[]
+}
+
+model Order {
+  id              String       @id @default(uuid())
+  companyId       String
+  company         Company      @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  orderNumber     Int
+  customerName    String
+  customerPhone   String
+  deliveryAddress String?
+  notes           String?
+  subtotal        Float
+  deliveryFee     Float
+  total           Float
+  status          String       @default("PENDING") // PENDING | IN_KITCHEN | OUT_FOR_DELIVERY | DELIVERED | CANCELLED
+  items           OrderItem[]
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+}
+
+model OrderItem {
+  id         String   @id @default(uuid())
+  orderId    String
+  order      Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  menuItemId String?
+  menuItem   MenuItem? @relation(fields: [menuItemId], references: [id], onDelete: SetNull)
+  name       String
+  price      Float
+  quantity   Int
+}
+
+model KnowledgeDoc {
+  id         String   @id @default(uuid())
+  companyId  String
+  company    Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  title      String
+  fileType   String   // pdf | image | faq
+  fileUrl    String?
+  rawText    String
+  createdAt  DateTime @default(now())
+}
+
+model Conversation {
+  id            String    @id @default(uuid())
+  companyId     String
+  company       Company   @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  customerPhone String
+  messages      String    // JSON array of serialized chat turns
+  updatedAt     DateTime  @updatedAt
+
+  @@unique([companyId, customerPhone])
+}

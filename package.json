@@ -1,0 +1,23 @@
+{
+  "name": "chatpilot-b2b-platform",
+  "version": "1.0.0",
+  "description": "Multi-Tenant B2B AI WhatsApp Ordering & Customer Support Platform",
+  "scripts": {
+    "server:dev": "npm --prefix server run dev",
+    "client:dev": "npm --prefix client run dev",
+    "seed": "npm --prefix server run prisma:seed",
+    "build": "npm --prefix server run build && npm --prefix client run build"
+  },
+  "keywords": [
+    "whatsapp",
+    "baileys",
+    "gemini",
+    "openai",
+    "openrouter",
+    "b2b",
+    "orders",
+    "multi-tenant"
+  ],
+  "author": "",
+  "license": "ISC"
+}
