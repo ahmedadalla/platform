@@ -5,10 +5,6 @@ COPY package*.json ./
 RUN npm ci
 
 COPY . .
-# VITE_API_URL will be passed as build-arg so the compiled JS has the right URL
-ARG VITE_API_URL
-ENV VITE_API_URL=$VITE_API_URL
-
 RUN npm run build
 
 # --- Production image: nginx to serve static files ---

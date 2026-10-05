@@ -19,7 +19,7 @@ export const SocketProvider: React.FC<{ children: React.ReactNode }> = ({ childr
 
   useEffect(() => {
     // Only connect if user is authenticated and belongs to a company
-    const socketUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+    const socketUrl = import.meta.env.VITE_API_URL || window.location.origin;
     const newSocket = io(socketUrl, {
       transports: ['websocket', 'polling'],
     });
